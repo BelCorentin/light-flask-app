@@ -68,10 +68,30 @@
             min-height: 100px;
             overflow-wrap: break-word;
         }
+
+        #api-key-btn {
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        #api-key-btn:hover {
+            background-color: #006A8F;
+        }
     </style>
 </head>
 
 <body>
+    <div class="api-key-container">
+        <label for="api-key">Enter your OpenAI API key:</label>
+        <input type="text" id="api-key" name="api_key">
+        <button id="submit-api-key">Submit</button>
+    </div>
+
     <div class="chat-container">
         <h1>GPT-4 API Chat</h1>
         <form id="chat-form">
@@ -83,28 +103,48 @@
 
     <script>
         window.onload = function () {
-            document
-                .getElementById("chat-form")
-                .addEventListener("submit", function (event) {
-                    // Prevent the form from submitting and refreshing the page
-                    event.preventDefault();
+            const apiKeyBtn = document.getElementById("api-key-btn");
+            const apiKeyInput = document.getElementById("api-key-input");
+            const apiKeyForm = document.getElementById("api-key-form");
+            const chatForm = document.getElementById("chat-form");
+            const resultDiv = document.getElementById("result");
 
-                    let userInput = document.getElementById("user-input").value;
-                    let url = `/gpt4?user_input=${encodeURIComponent(userInput)}`;
+            apiKeyBtn.addEventListener("click", function (event) {
+                event.preventDefault();
+                apiKeyBtn.style.display = "none";
+                apiKeyForm.style.display = "block";
+            });
 
-                    fetch(url)
-                        .then((response) => response.json())
-                        .then((data) => {
-                            let content = data.content;
-                            let resultDiv = document.getElementById("result");
-                            resultDiv.innerHTML = content;
-                        })
-                        .catch((error) => {
-                            console.error("Error fetching GPT-4 response:", error);
-                        });
-                });
+            apiKeyForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const apiKey = apiKeyInput.value;
+                fetch(`/set_api_key?api_key=${encodeURIComponent(apiKey)}`)
+                    .then(() => {
+                        apiKeyForm.style.display = "none";
+                        chatForm.style.display = "block";
+                    })
+                    .catch((error) => {
+                        console.error("Error setting API key:", error);
+                    });
+            });
+
+            chatForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                let userInput = document.getElementById("user-input").value;
+                let url = `/gpt4?user_input=${encodeURIComponent(userInput)}`;
+                fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        let content = data.content;
+                        resultDiv.innerHTML = content;
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching GPT-4 response:", error);
+                    });
+            });
         };
     </script>
+
 </body>
 
 </html>

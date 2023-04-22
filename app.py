@@ -8,9 +8,22 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+@app.route("/set-api-key", methods=["POST"])
+def set_api_key():
+    api_key = request.form["api_key"]
+    openai.api_key = api_key
+    return "API key set successfully"
+
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    subdomain = request.host.split(".")[0]
+    if subdomain == "gpt":
+        return render_template("index.html")
+    elif subdomain == "fun":
+        return "FUN FUN FUN"
+    else:
+        return "HELLOOOOO"
 
 
 @app.route("/gpt4", methods=["GET", "POST"])
@@ -34,4 +47,5 @@ def gpt4():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=80)
+    app.run(debug=True)
+    # app.run(debug=True, host="0.0.0.0", port=80)
