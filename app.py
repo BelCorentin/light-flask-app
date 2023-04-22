@@ -23,7 +23,7 @@ def index():
     elif subdomain == "fun":
         return "FUN FUN FUN"
     else:
-        return "HELLOOOOO"
+        return render_template("index.html")
 
 
 @app.route("/gpt4", methods=["GET", "POST"])
