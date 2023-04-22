@@ -23,7 +23,9 @@ def gpt4():
     messages = [{"role": "user", "content": user_input}]
 
     try:
-        response = openai.ChatCompletion.create(model="gpt-4", messages=messages)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", messages=messages
+        )
         content = response.choices[0].message["content"]
     except RateLimitError:
         content = "The server is experiencing a high volume of requests. Please try again later."
